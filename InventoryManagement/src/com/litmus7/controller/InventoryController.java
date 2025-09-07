@@ -8,7 +8,7 @@ public class InventoryController {
     private final InventoryService service = new InventoryService();
 
     public int triggerPhase2Processing() {
-        File[] files = service.getCsvFiles();
+        File[] files = service.getCsvFiles().getData();
         if (files == null || files.length == 0) {
             System.out.println("No CSV files found in input folder.");
             return 0;
@@ -24,7 +24,7 @@ public class InventoryController {
             File file = files[i];
             threads[i] = new Thread(() -> 
             {
-                boolean result = service.processSingleFile(file);
+                boolean result = service.processSingleFile(file).getData();
 //                if (result) {
 //                    positive++;
 //                } else {
