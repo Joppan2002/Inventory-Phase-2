@@ -20,5 +20,9 @@ public class InventoryDAOException extends Exception
 		{
 			return errorCode;
 		}
-	}
-	
+
+	 public InventoryDAOException(String message) {
+        super(message);
+    }
+}
+
