@@ -1,51 +1,52 @@
 package com.litmus7.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.litmus7.services.InventoryService;
 
 public class InventoryController {
 
     private final InventoryService service = new InventoryService();
 
-    public int triggerPhase2Processing() {
+    public int[] triggerPhase2Processing() {
         File[] files = service.getCsvFiles().getData();
         if (files == null || files.length == 0) {
             System.out.println("No CSV files found in input folder.");
-            return 0;
+            return new int[]{0, 0, 0};
         }
 
-        int processedCount =0;
-        int positive =0;
-        int negative =0;
+        AtomicInteger positive = new AtomicInteger(0);
+        AtomicInteger negative = new AtomicInteger(0);
+        List<Thread> threads = new ArrayList<>();
 
-        Thread[] threads = new Thread[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
-            threads[i] = new Thread(() -> 
-            {
+        for (File file : files) {
+            Thread thread = new Thread(() -> {
                 boolean result = service.processSingleFile(file).getData();
-//                if (result) {
-//                    positive++;
-//                } else {
-//                    negative++;
-//                }
+                if (result) {
+                    positive.incrementAndGet();
+                } else {
+                    negative.incrementAndGet();
+                }
             });
-            threads[i].start();
-            processedCount++;
+
+            threads.add(thread);
+            thread.start();
         }
-        
+
+
         for (Thread thread : threads) {
             try {
                 thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                System.err.println("Thread interrupted while waiting: " + e.getMessage());
             }
         }
 
-        
-       
-
-        return processedCount;
+        int processedCount = files.length;
+        return new int[]{processedCount, positive.get(), negative.get()};
     }
 }
