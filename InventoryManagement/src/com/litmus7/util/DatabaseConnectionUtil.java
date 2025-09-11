@@ -18,7 +18,7 @@ public class DatabaseConnectionUtil {
 		
 		Properties properties=new Properties();
 		
-		try(FileInputStream fs=new FileInputStream("C:\\Users\\ACER\\OneDrive\\Documents\\Litmus 7 assignments\\Java_Threads_Assignment_Phase1\\InventoryManagement\\src\\resources\\dbproperties.txt"))
+		try(FileInputStream fs=new FileInputStream("C:\\Users\\ACER\\OneDrive\\Documents\\Litmus 7 assignments\\Java_Threads_Assignment_Phase2\\InventoryManagement\\resources\\dbproperties.txt"))
 		{
 			
 			
